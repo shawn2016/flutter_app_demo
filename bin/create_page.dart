@@ -18,6 +18,7 @@ void main(List<String> arguments) {
       '$basePath/pages/$fileName/${fileName}_controller.dart';
   final servicePath = '$basePath/pages/$fileName/${fileName}_service.dart';
   final bindingPath = '$basePath/pages/$fileName/${fileName}_binding.dart';
+  final modelPath = '$basePath/pages/$fileName/${fileName}_model.dart';
   final routesPath = '$basePath/routes/app_routes.dart';
 
   // 创建目录
@@ -32,6 +33,11 @@ void main(List<String> arguments) {
   _createFileWithPrompt(
     controllerPath,
     _controllerTemplate(className, fileName),
+    forceOverwrite,
+  );
+  _createFileWithPrompt(
+    modelPath,
+    _modelTemplate(className, fileName),
     forceOverwrite,
   );
   _createFileWithPrompt(
@@ -113,6 +119,34 @@ class ${className}Page extends GetView<${className}Controller> {
       body: Center(child: Text('Welcome to $className Page')),
     );
   }
+}
+""";
+}
+
+String _modelTemplate(String className, String fileName) {
+  return """
+import 'package:json_annotation/json_annotation.dart';
+
+part '${fileName}_model.g.dart';
+
+/// 基于 `assets/json/$fileName.json` 生成 `${fileName}_model.dart`
+
+@JsonSerializable()
+class ${className}Model {
+  final String id;
+  final String name;
+
+  ${className}Model({
+    required this.id,
+    required this.name,
+  });
+
+  // 反序列化：将 Map 数据转换为 ${className}Model 实例
+  factory ${className}Model.fromJson(Map<String, dynamic> json) => _\$${className}ModelFromJson(json);
+
+  // 序列化：将 ${className}Model 实例转换为 Map 数据
+  Map<String, dynamic> toJson() => _\$${className}ModelToJson(this);
+
 }
 """;
 }
